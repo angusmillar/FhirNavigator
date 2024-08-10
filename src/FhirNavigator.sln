@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{9B5E83B9-B18C-4426-B896-6BE77E45090E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FhirNavigator", "FhirNavigator", "{A6C202AD-D4C5-4148-A30E-7896E8908025}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FhirNavigator", "FhirNavigator\FhirNavigator.csproj", "{74544BCA-B2A4-43CE-A3DE-32F9DC10CC53}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B5E83B9-B18C-4426-B896-6BE77E45090E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B5E83B9-B18C-4426-B896-6BE77E45090E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B5E83B9-B18C-4426-B896-6BE77E45090E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B5E83B9-B18C-4426-B896-6BE77E45090E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74544BCA-B2A4-43CE-A3DE-32F9DC10CC53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74544BCA-B2A4-43CE-A3DE-32F9DC10CC53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74544BCA-B2A4-43CE-A3DE-32F9DC10CC53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74544BCA-B2A4-43CE-A3DE-32F9DC10CC53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{74544BCA-B2A4-43CE-A3DE-32F9DC10CC53} = {A6C202AD-D4C5-4148-A30E-7896E8908025}
+	EndGlobalSection
+EndGlobal
