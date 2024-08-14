@@ -17,7 +17,6 @@ public interface IFhirNavigator
     /// If a contained reference, then throw an error
     /// Otherwise, attempt to load the referenced resource from the FHIR  Repository via a FHIR GET API call  
     /// </summary>
-    /// <param name="repositoryCode"></param>
     /// <param name="resourceReference"></param>
     /// <param name="errorLocationDisplay"></param>
     /// <typeparam name="T"></typeparam>
@@ -31,7 +30,6 @@ public interface IFhirNavigator
     /// If a contained reference, then get the resource for that parentResource's contained section
     /// Otherwise, attempt to load the referenced resource from the FHIR  Repository via a FHIR GET API call  
     /// </summary>
-    /// <param name="repositoryCode"></param>
     /// <param name="resourceReference"></param>
     /// <param name="errorLocationDisplay"></param>
     /// <param name="parentResource"></param>
@@ -44,7 +42,7 @@ public interface IFhirNavigator
     
     Task<T?> GetResource<T>(string resourceId) where T : Resource;
     
-    Task<T> UpdateResource<T>(T resource) where T : Resource;
+    Task<T> UpdateResource<T>(T resource, bool versionAware = true) where T : Resource;
     
     Task<T> CreateResource<T>(T resource) where T : Resource;
     

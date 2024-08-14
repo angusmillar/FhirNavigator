@@ -7,13 +7,13 @@ namespace FhirNavigator.Api;
 
 public class FhirUpdateApi(IFhirHttpClientFactory fhirHttpClientFactory, ILogger<FhirUpdateApi> logger) : FhirApiBase, IFhirUpdateApi
 {
-    public  async Task<T> UpdateAsync<T>(string repositoryCode, T resource) where T : Resource
+    public  async Task<T> UpdateAsync<T>(string repositoryCode, T resource, bool versionAware = true) where T : Resource
     {
         ThrowIfRepositoryCodeEmptyString(repositoryCode);
         FhirClient fhirClient = fhirHttpClientFactory.CreateClient(repositoryCode);
         try
         {
-            Resource? updatedResource = await fhirClient.UpdateAsync(resource, versionAware: true);
+            Resource? updatedResource = await fhirClient.UpdateAsync(resource, versionAware: versionAware);
             if (updatedResource is not T updatedTypedResource)
             {
                 throw new InvalidCastException(nameof(updatedResource));

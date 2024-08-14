@@ -18,9 +18,9 @@ public class FhirCallService(
     public IFhirResourceSearchCache Cache => fhirResourceSearchCache;
 
     public async Task<T?> Update<T>(string repositoryCode,
-        T resource) where T : Resource
+        T resource, bool versionAware = true) where T : Resource
     {
-        return await fhirUpdateApi.UpdateAsync<T>(repositoryCode: repositoryCode, resource);
+        return await fhirUpdateApi.UpdateAsync<T>(repositoryCode: repositoryCode, resource, versionAware: versionAware);
     }
 
     public async Task<T> Create<T>(string repositoryCode,

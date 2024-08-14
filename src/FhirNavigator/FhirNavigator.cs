@@ -23,9 +23,9 @@ public class FhirNavigator(
             pageLimiter: pageLimiter);
     }
     
-    public async Task<T> UpdateResource<T>(T resource) where T : Resource
+    public async Task<T> UpdateResource<T>(T resource, bool versionAware = true) where T : Resource
     {
-        T? fhirResource = await fhirCallService.Update(repositoryCode: repositoryCode, resource: resource);
+        T? fhirResource = await fhirCallService.Update(repositoryCode: repositoryCode, resource: resource, versionAware: versionAware);
         if (fhirResource is null)
         {
             throw new ApplicationException($"Could not update {typeof(T).Name} FHIR resource for reference : {GetResourceTypeName<T>()}/{resource.Id}");

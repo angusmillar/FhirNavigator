@@ -21,9 +21,10 @@ public interface IFhirCallService
     /// </summary>
     /// <param name="repositoryCode"></param>
     /// <param name="resource"></param>
+    /// <param name="versionAware"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    Task<T?> Update<T>(string repositoryCode, T resource) where T : Resource;
+    Task<T?> Update<T>(string repositoryCode, T resource, bool versionAware = true) where T : Resource;
 
 
     /// <summary>
