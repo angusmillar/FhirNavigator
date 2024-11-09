@@ -80,7 +80,7 @@ public class FhirNavigator(
         return await GetResourceAll<T>(resourceReference, errorLocationDisplay, parentResource: null);
     }
 
-    private async Task<T> GetResourceAll<T>(
+    private async Task<T?> GetResourceAll<T>(
         ResourceReference? resourceReference,
         string? errorLocationDisplay,
         Resource? parentResource = null) where T : Resource
@@ -125,8 +125,9 @@ public class FhirNavigator(
             Resource? containedResource = parentDomainResource.Contained.FirstOrDefault(x => x.Id.Equals(parsedResourceReference.ResourceId));
             if (containedResource is null)
             {
-                throw new ApplicationException(
-                    $"The target Resource Reference is of type Contained however its resource is not found in the  parent resource's Contained element. Reference was: {resourceReference.Reference}. ");
+                // throw new ApplicationException(
+                //     $"The target Resource Reference is of type Contained however its resource is not found in the  parent resource's Contained element. Reference was: {resourceReference.Reference}. ");
+                return null;
             }
 
             if (containedResource is not T typedContainedResource)
@@ -142,12 +143,7 @@ public class FhirNavigator(
 
         if (fhirResource is null)
         {
-            fhirResource = await fhirCallService.GetById<T>(repositoryCode: repositoryCode, parsedResourceReference.ResourceId);
-        }
-
-        if (fhirResource is null)
-        {
-            throw new ApplicationException($"Could not locate {typeof(T).Name} FHIR resource for reference : {parsedResourceReference.OriginalString}");
+            return await fhirCallService.GetById<T>(repositoryCode: repositoryCode, parsedResourceReference.ResourceId);
         }
 
         return fhirResource;

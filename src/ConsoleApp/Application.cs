@@ -23,7 +23,7 @@ public class Application(
         groupSearchParams.Add("_include", $"organization");
         groupSearchParams.Add("_sort", $"_lastUpdated");
         
-        IFhirNavigator fhirNavigator = fhirNavigatorFactory.GetFhirNavigator("MyFhirServerName");
+        IFhirNavigator fhirNavigator = fhirNavigatorFactory.GetFhirNavigator("Pyro");
         
         SearchInfo searchInfo = await fhirNavigator.Search<Patient>(groupSearchParams, pageLimiter: 100);
 

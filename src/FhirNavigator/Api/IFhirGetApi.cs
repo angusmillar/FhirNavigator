@@ -4,5 +4,5 @@ namespace FhirNavigator.Api;
 
 public interface IFhirGetApi
 {
-    Task<T> GetAsync<T>(string repositoryCode, string id) where T : Resource;
+    Task<T?> GetAsync<T>(string repositoryCode, string id) where T : Resource;
 }

@@ -6,12 +6,12 @@
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>FHIR Navigator</Title>
-        <Description>HIR Navigator is framework for real world use of the FHIR API. It is a supporting abstraction layer around the basic FHIR interactions simplifying the most common use cases and challenges developers face when using these APIs in practice.</Description>
+        <Description>FHIR Navigator is framework for real world use of the FHIR API. It is a supporting abstraction layer around the basic FHIR interactions simplifying the most common use cases and challenges developers face when using these APIs in practice.</Description>
         <PackageProjectUrl>https://github.com/angusmillar/FhirNavigator</PackageProjectUrl>
         <RepositoryUrl>https://github.com/angusmillar/FhirNavigator</RepositoryUrl>
         <RepositoryType>GIT</RepositoryType>
         <PackageTags>FHIR</PackageTags>
-        <Version>0.0.4</Version>
+        <Version>0.0.5</Version>
     </PropertyGroup>
 
     <ItemGroup>
