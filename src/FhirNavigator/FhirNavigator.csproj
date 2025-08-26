@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -12,11 +11,13 @@
         <RepositoryType>GIT</RepositoryType>
         <PackageTags>FHIR</PackageTags>
         <Version>0.0.5</Version>
+        <LangVersion>13</LangVersion>
+        <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Hl7.Fhir.R4" Version="5.9.1" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+      <PackageReference Include="Hl7.Fhir.R4" Version="5.12.1" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
     </ItemGroup>
 
 </Project>

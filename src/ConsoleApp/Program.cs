@@ -2,7 +2,7 @@
 using FhirNavigator;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 
@@ -14,41 +14,37 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("application.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-IConfiguration configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false)
-    .Build();
-    
-IServiceCollection services = new ServiceCollection();
+var builder = Host.CreateApplicationBuilder(args);
 
-services.AddLogging();
+builder.Logging.AddSerilog();
 
-//Configuration
-services.AddOptions<ApplicationConfiguration>().Bind(configuration.GetSection(ApplicationConfiguration.SectionName));
+// IServiceCollection
+IServiceCollection services = builder.Services;
 
-//Add Services
+// Configuration
+IConfiguration configuration = builder.Configuration;
+services.AddOptions<ApplicationConfiguration>()
+    .Bind(configuration.GetSection(ApplicationConfiguration.SectionName));
+
+// Add Services
 services.AddScoped<Application>();
 
+//Set up the FhirNavigator
 FhirNavigatorSettings? fhirNavigatorSettings = configuration.GetRequiredSection(FhirNavigatorSettings.SectionName)
     .Get<FhirNavigatorSettings>();
 ArgumentNullException.ThrowIfNull(fhirNavigatorSettings);
+
 services.AddFhirNavigator(settings =>
 {
     settings.FhirRepositories = fhirNavigatorSettings.FhirRepositories;
     settings.Proxy = fhirNavigatorSettings.Proxy;
 });
 
-var serviceProvider = services.BuildServiceProvider();
+//Build the host and resolve Application via a scope
+using var host = builder.Build();
 
-serviceProvider.GetRequiredService<ILoggerFactory>()
-    .AddSerilog();
+//Create a new scope
+await using var scope = host.Services.CreateAsyncScope();
 
-
-var serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
-await using (var scope = serviceScopeFactory.CreateAsyncScope())
-{
-    await scope.ServiceProvider.GetRequiredService<Application>().Run();
-}
-
-
-
+//Get the Application and run it
+await scope.ServiceProvider.GetRequiredService<Application>().Run();
