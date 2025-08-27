@@ -10,9 +10,10 @@
         <RepositoryUrl>https://github.com/angusmillar/FhirNavigator</RepositoryUrl>
         <RepositoryType>GIT</RepositoryType>
         <PackageTags>FHIR</PackageTags>
-        <Version>0.0.5</Version>
+        <Version>0.0.6</Version>
         <LangVersion>13</LangVersion>
         <TargetFramework>net9.0</TargetFramework>
+        <PackageReleaseNotes>Upgraded to .NET 9</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
