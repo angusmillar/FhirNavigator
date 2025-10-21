@@ -12,6 +12,7 @@ public interface IFhirResourceSearchCache
     int ResourceCount<T>() where T : Resource;
     T? Get<T>(string resourceId) where T : Resource;
     List<T> GetList<T>() where T : Resource;
+    List<Resource> GetList();
     bool ContainsKey<T>(string resourceId) where T : Resource;
     bool Remove<T>(string resourceId) where T : Resource;
     Dictionary<string, T> GetResourceDictionary<T>() where T : Resource;

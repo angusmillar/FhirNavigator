@@ -75,6 +75,17 @@ public class FhirResourceSearchCache : IFhirResourceSearchCache
         return GetResourceDictionary<T>().Select(x => x.Value).ToList();
     }
 
+    public List<Resource> GetList()
+    {
+        List<Resource> resourceList = [];
+        
+        foreach (var typeOfResource in Dictionary)
+        {
+            resourceList.AddRange(typeOfResource.Value.Values);
+        }
+        return resourceList;
+    }
+
     public bool ContainsKey<T>(string resourceId) where T : Resource
     {
         string resourceName = typeof(T).Name;
