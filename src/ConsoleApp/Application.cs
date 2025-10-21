@@ -69,7 +69,7 @@ public class Application(
         
         foreach (Hl7.Fhir.Model.Task task in (resourceList))
         {
-            PractitionerRole? practitionerRole = await fhirNavigator.GetResource<PractitionerRole>(task.Requester, "serviceRequest.Requester");
+            PractitionerRole? practitionerRole = await fhirNavigator.GetResource<PractitionerRole>(task.Requester, "task.Requester");
             ArgumentNullException.ThrowIfNull(practitionerRole);
 
             Identifier? medicareProviderNumberIdentifier = GetMedicareProviderNumberIdentifier(practitionerRole.Identifier);
