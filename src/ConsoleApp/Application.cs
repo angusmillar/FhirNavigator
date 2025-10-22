@@ -51,7 +51,9 @@ public class Application(
         IFhirNavigator fhirNavigator = fhirNavigatorFactory.GetFhirNavigator(RepositoryCode);
         
         SearchInfo searchInfo = await fhirNavigator.Search<Hl7.Fhir.Model.Task>(groupSearchParams);
-
+        
+        logger.LogInformation("FHIR Server Name  : {FhirServerName}", fhirNavigator.RepositorySettings.DisplayName);
+        logger.LogInformation("FHIR Service Base Url : {ServiceBaseUrl}", fhirNavigator.RepositorySettings.ServiceBaseUrl);
         logger.LogInformation("Total pages on the server : {ResourceTotal}", searchInfo.Pages);
         logger.LogInformation("Total resources returned : {ResourceTotal}", searchInfo.ResourceTotal);
         
