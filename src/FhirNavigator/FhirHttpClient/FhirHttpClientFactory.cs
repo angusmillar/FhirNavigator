@@ -22,16 +22,16 @@ public class FhirHttpClientFactory(IHttpClientFactory httpClientFactory) : IFhir
     
     HttpClient GetHttpClient()
     {
-      HttpClient httpClient = httpClientFactory.CreateClient(orderRepositoryCode);
-      if (httpClient is null)
+      HttpClient client = httpClientFactory.CreateClient(orderRepositoryCode);
+      if (client is null)
       {
         throw new FhirNavigatorException($"Unable to locate FHIR Navigator HttpClient for the repository configuration code: {orderRepositoryCode}");
       }
-      if (httpClient.BaseAddress is null)
+      if (client.BaseAddress is null)
       {
         throw new FhirNavigatorException($"Not Service Base address could be found for {nameof(orderRepositoryCode)}: {orderRepositoryCode}.");
       }
-      return httpClient;
+      return client;
     }
   }
 }
