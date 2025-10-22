@@ -6,6 +6,7 @@ namespace FhirNavigator;
 
 public interface IFhirNavigator
 {
+    FhirRepositorySettings RepositorySettings { get; }
     
     IFhirResourceSearchCache Cache { get; }
     
