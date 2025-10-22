@@ -56,7 +56,7 @@ public static class RepositoryFhirNavigatorRegistrationExtension
                 y) => new FhirNavigator(
                 fhirCallService: services.BuildServiceProvider().GetRequiredService<IFhirCallService>(),
                 fhirUriFactory: services.BuildServiceProvider().GetRequiredService<IFhirUriFactory>(),
-                repositoryCode: orderRepositorySettings.Code));
+                fhirRepositorySettings: orderRepositorySettings));
         }
 
         //FHIR Api Client & Services
