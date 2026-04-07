@@ -36,6 +36,8 @@ ArgumentNullException.ThrowIfNull(fhirNavigatorSettings);
 
 services.AddFhirNavigator(settings =>
 {
+    settings.UserAgentName = fhirNavigatorSettings.UserAgentName;
+    settings.UserAgentVersion = fhirNavigatorSettings.UserAgentVersion;
     settings.FhirRepositories = fhirNavigatorSettings.FhirRepositories;
     settings.Proxy = fhirNavigatorSettings.Proxy;
 });

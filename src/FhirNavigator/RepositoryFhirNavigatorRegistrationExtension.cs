@@ -29,15 +29,20 @@ public static class RepositoryFhirNavigatorRegistrationExtension
         services.AddTransient<IOAuthTokenApi, OAuthTokenApi>();
         services.AddSingleton<IApiTokenStore, ApiTokenStore>();
         services.AddSingleton<IJitter, Jitter>();
-
-        // var fhirNavigatorSettings = configuration.GetRequiredSection(FhirNavigatorSettings.SectionName)
-        //     .Get<FhirNavigatorSettings>();
         
         foreach (FhirRepositorySettings orderRepositorySettings in fhirNavigatorSettings.FhirRepositories)
         {
+            ProductInfoHeaderValue productInfoHeaderValue = new ProductInfoHeaderValue(
+                fhirNavigatorSettings.UserAgentName,
+                fhirNavigatorSettings.UserAgentVersion);
+            
             //Set-up IHttpClientFactory to obtain HttpClients for each FHIR Order Repository
             services.AddHttpClient(orderRepositorySettings.Code,
-                    client => { client.BaseAddress = orderRepositorySettings.ServiceBaseUrl; })
+                    client =>
+                    {
+                        client.BaseAddress = orderRepositorySettings.ServiceBaseUrl;
+                        client.DefaultRequestHeaders.UserAgent.Add(productInfoHeaderValue);
+                    })
                 .ConfigurePrimaryHttpMessageHandler<ProxyHttpClientHandler>()
                 .AddHttpMessageHandler<RetryDelegatingHandler>()
                 .AddHttpMessageHandler(sp =>
@@ -47,7 +52,11 @@ public static class RepositoryFhirNavigatorRegistrationExtension
             if (orderRepositorySettings.UseOAuth2)
             {
                 services.AddHttpClient(orderRepositorySettings.OAuth2ClientCode,
-                        client => { client.BaseAddress = orderRepositorySettings.TokenEndpointUrl; })
+                        client =>
+                        {
+                            client.BaseAddress = orderRepositorySettings.TokenEndpointUrl; 
+                            client.DefaultRequestHeaders.UserAgent.Add(productInfoHeaderValue);
+                        })
                     .AddHttpMessageHandler<RetryDelegatingHandler>()
                     .ConfigurePrimaryHttpMessageHandler<ProxyHttpClientHandler>();
             }
