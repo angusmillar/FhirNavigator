@@ -1,4 +1,5 @@
-﻿using FhirNavigator.Api;
+﻿using System.Net.Http.Headers;
+using FhirNavigator.Api;
 using FhirNavigator.Client;
 using FhirNavigator.Client.Handlers;
 using FhirNavigator.Client.OAuthToken;
