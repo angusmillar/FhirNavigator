@@ -30,9 +30,11 @@ public class AuthenticationDelegatingHandler(
             token = apiTokenStore.GetToken(OrderRepositorySettings.Code);
             if (token is null || token.WillExpireSoon())
             {
-                logger.LogInformation("Requesting new API token for {OrderRepositoryCode}: {OrderRepositoryDisplayName}", OrderRepositorySettings.Code, OrderRepositorySettings.DisplayName);
+                logger.LogInformation("Requesting new API token for {OrderRepositoryCode}: {OrderRepositoryDisplayName}", 
+                    OrderRepositorySettings.Code, OrderRepositorySettings.DisplayName);
                 token = await RefreshTokenAsync(OrderRepositorySettings);
-                logger.LogInformation("Obtained new API token for {OrderRepositoryCode}: {OrderRepositoryDisplayName}", OrderRepositorySettings.Code, OrderRepositorySettings.DisplayName);
+                logger.LogInformation("Obtained new API token for {OrderRepositoryCode}: {OrderRepositoryDisplayName}", 
+                    OrderRepositorySettings.Code, OrderRepositorySettings.DisplayName);
                 apiTokenStore.AddOrReplaceToken(OrderRepositorySettings.Code, token);
             }
 
@@ -55,12 +57,6 @@ public class AuthenticationDelegatingHandler(
                 parameter: GetBase64UsernamePassword(
                     username: OrderRepositorySettings.Username, 
                     password: OrderRepositorySettings.Password));
-            
-            // request.Headers.Add(
-            //     "Authorization", 
-            //     GetAuthorizationToken(
-            //         username: OrderRepositorySettings.Username, 
-            //         password: OrderRepositorySettings.Password));
         }
 
         if (!string.IsNullOrWhiteSpace(OrderRepositorySettings.X_API_Key))
@@ -94,15 +90,15 @@ public class AuthenticationDelegatingHandler(
             return apiTokenResult.Value;
         }
 
-        logger.LogError("Error obtaining new API token for {OrderRepositoryCode}: {OrderRepositoryDisplayName}. ErrorMessage: {ErrorMessage}", fhirRepositorySettings.Code, fhirRepositorySettings.DisplayName, apiTokenResult.ErrorMessage);
+        logger.LogError("Error obtaining new API token for {OrderRepositoryCode}: {OrderRepositoryDisplayName}. " +
+                        "ErrorMessage: {ErrorMessage}", 
+            fhirRepositorySettings.Code, 
+            fhirRepositorySettings.DisplayName, 
+            apiTokenResult.ErrorMessage);
+        
         throw new ApplicationException(apiTokenResult.ErrorMessage);
     }
-
-    private static string GetAuthorizationToken(string username, string password)
-    {
-        return $"Basic {Base64Encode($"{username}:{password}")}";
-    }
-
+    
     private static string GetBase64UsernamePassword(string username, string password)
     {
         return Base64Encode($"{username}:{password}");

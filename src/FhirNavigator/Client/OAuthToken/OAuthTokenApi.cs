@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Sonic.Fhir.Tools.Placer.Application.Infrastructure;
-using Sonic.Orders.Common.Api.OAuthToken;
 
 namespace FhirNavigator.Client.OAuthToken
 {
@@ -29,46 +28,41 @@ namespace FhirNavigator.Client.OAuthToken
 
       if (httpResponseMessageResult.Success)
       {
-        HttpResponseMessage Response = httpResponseMessageResult.Value;
-        if (Response.IsSuccessStatusCode)
+        HttpResponseMessage response = httpResponseMessageResult.Value;
+        if (response.IsSuccessStatusCode)
         {
-          if (Response.Content == null)
+          if (response.Content == null)
           {
-            return Result<ApiToken>.Fail($"HttpClient responded with the HTTP Status code of {Response.StatusCode} yet the response's content was found to be null.");
+            return Result<ApiToken>.Fail($"HttpClient responded with the HTTP Status code of {response.StatusCode} yet the response's content was found to be null.");
           }
-          var ResponseContent = await Response.Content.ReadAsStringAsync();
-          Sonic.Orders.Common.Api.OAuthToken.OAuthToken? OAuthToken = JsonSerializer.Deserialize<Sonic.Orders.Common.Api.OAuthToken.OAuthToken>(ResponseContent);
-          if (OAuthToken is not null)
+          var responseContent = await response.Content.ReadAsStringAsync();
+          Sonic.Orders.Common.Api.OAuthToken.OAuthToken? oAuthToken = JsonSerializer.Deserialize<Sonic.Orders.Common.Api.OAuthToken.OAuthToken>(responseContent);
+          if (oAuthToken is not null)
           {
-            ApiToken ApiToken = new ApiToken(value: OAuthToken.access_token, scheme: OAuthToken.token_type, expiresInSec: OAuthToken.expires_in, obtainedAt: DateTime.Now);
-            return Result<ApiToken>.Ok(ApiToken);
+            ApiToken apiToken = new ApiToken(value: oAuthToken.access_token, scheme: oAuthToken.token_type, expiresInSec: oAuthToken.expires_in, obtainedAt: DateTime.Now);
+            return Result<ApiToken>.Ok(apiToken);
           }
-          else
-          {
-            Logger.LogError($"The response body was unable to be parsed to an {nameof(OAuthToken)} type. Response string was : {ResponseContent}");
-            return Result<ApiToken>.Fail($"The response body was unable to be parsed to an {nameof(OAuthToken)} type. Response string was : {ResponseContent}");
-          }                    
+          
+          Logger.LogError("The response body was unable to be parsed to an {OAuthToken} type. Response string was : {ResponseContent}",
+            nameof(oAuthToken), responseContent);
+          return Result<ApiToken>.Fail($"The response body was unable to be parsed to an {nameof(oAuthToken)} type. Response string was : {responseContent}");
+                              
         }
-        else
+       
+        if (response.Content != null)
         {
-          if (Response.Content != null)
-          {
-            var ErrorResponseContent = await Response.Content.ReadAsStringAsync();
-            Logger.LogError("Response status: {StatusCode}, Content: {Content}", Response.StatusCode, ErrorResponseContent);
-            return Result<ApiToken>.Fail($"Response status: {Response.StatusCode}, Content: {ErrorResponseContent}");
-          }
-          else
-          {
-            Logger.LogError("Response status: {StatusCode}, Content: [None]", Response.StatusCode);
-            return Result<ApiToken>.Fail($"Response status: {Response.StatusCode}, Content: [None]");
-          }
+          var errorResponseContent = await response.Content.ReadAsStringAsync();
+          Logger.LogError("Response status: {StatusCode}, Content: {Content}", response.StatusCode, errorResponseContent);
+          return Result<ApiToken>.Fail($"Response status: {response.StatusCode}, Content: {errorResponseContent}");
         }
+       
+        Logger.LogError("Response status: {StatusCode}, Content: [None]", response.StatusCode);
+        return Result<ApiToken>.Fail($"Response status: {response.StatusCode}, Content: [None]");
       }
-      else
-      {
-        Logger.LogError(httpResponseMessageResult.ErrorMessage);
-        return Result<ApiToken>.Fail(httpResponseMessageResult.ErrorMessage);
-      }
+      
+      Logger.LogError("ErrorMessage: {ErrorMessage}", httpResponseMessageResult.ErrorMessage);
+      return Result<ApiToken>.Fail(httpResponseMessageResult.ErrorMessage);
+      
     }
   }
 }
