@@ -1,4 +1,4 @@
-﻿using FhirNavigator.Support;
+﻿
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FhirNavigator;
