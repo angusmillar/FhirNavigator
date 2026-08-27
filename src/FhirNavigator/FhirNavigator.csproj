@@ -3,22 +3,57 @@
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>FHIR Navigator</Title>
+        <Authors>Angus Millar</Authors>
         <Description>FHIR Navigator is framework for real world use of the FHIR API. It is a supporting abstraction layer around the basic FHIR interactions simplifying the most common use cases and challenges developers face when using these APIs in practice.</Description>
         <PackageProjectUrl>https://github.com/angusmillar/FhirNavigator</PackageProjectUrl>
         <RepositoryUrl>https://github.com/angusmillar/FhirNavigator</RepositoryUrl>
         <RepositoryType>GIT</RepositoryType>
         <PackageTags>FHIR</PackageTags>
-        <Version>1.0.0</Version>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <!-- Released versions come from the git tag via -p:Version in the publish workflow.
+             Nothing packs locally (no GeneratePackageOnBuild), so this placeholder only
+             surfaces if someone runs `dotnet pack` by hand - in which case the resulting
+             package is unmistakably not a release. -->
+        <Version>0.0.0-local</Version>
         <LangVersion>13</LangVersion>
         <TargetFramework>net9.0</TargetFramework>
-        <PackageReleaseNotes>Added support for bearer tokens</PackageReleaseNotes>
+        <PackageReleaseNotes>
+1.0.0 contains breaking changes for consumers upgrading from 0.0.9.
+
+BREAKING - three public types moved namespace:
+  Result / Result&lt;T&gt;  ->  FhirNavigator.Infrastructure       (was Sonic.Fhir.Tools.Placer.Application.Infrastructure)
+  IFhirUriFactory      ->  FhirNavigator.FhirUri              (was Sonic.Fhir.Tools.Placer.Application.FhirSupport)
+  OAuthToken           ->  FhirNavigator.Client.OAuthToken    (was Sonic.Orders.Common.Api.OAuthToken)
+Update or remove any 'using Sonic.*' directives.
+
+BREAKING - FhirRepositorySettings.UseBearerToken is a new required member. Code that
+constructs FhirRepositorySettings via an object initialiser must now set it
+(e.g. UseBearerToken = false). Settings bound from appsettings.json are unaffected.
+
+NEW - Bearer token authentication via the UseBearerToken and BearerToken settings.
+NEW - The package now declares the MIT license and includes the README.
+NEW - A symbol package (.snupkg) with SourceLink is published, so consumers can step
+      into FhirNavigator source while debugging.
+    </PackageReleaseNotes>
+
+        <!-- Symbols and SourceLink: lets consumers step into FhirNavigator source when
+             debugging. SourceLink for GitHub is built into the .NET SDK, so no package
+             reference is needed. ContinuousIntegrationBuild is set by the CI workflow. -->
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="Hl7.Fhir.R4" Version="5.12.1" />
       <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="../../README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

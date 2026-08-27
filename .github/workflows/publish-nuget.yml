@@ -1,0 +1,128 @@
+name: Publish NuGet package
+
+# IMPORTANT: the *file name* of this workflow (publish-nuget.yml) is registered in the
+# NuGet.org Trusted Publishing policy. Renaming or moving this file will silently break
+# publishing until the policy on nuget.org is updated to match.
+
+on:
+  push:
+    tags:
+      # Broad match on purpose. The exact version format is validated in the
+      # "Resolve package version" step so a malformed tag fails loudly rather
+      # than silently matching nothing.
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build for this dry run. Nothing is published.'
+        required: false
+        default: '0.0.0-dryrun'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-nuget
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build, pack and publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for NuGet Trusted Publishing (OIDC)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve package version
+        id: version
+        shell: bash
+        env:
+          # Passed via env rather than inlined into the script, so the input value
+          # can never be interpreted as shell.
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            VERSION="${INPUT_VERSION}"
+            echo "Dry run: building version ${VERSION}. Nothing will be published."
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            if [[ "${TAG}" != v* ]]; then
+              echo "::error::Tag '${TAG}' does not start with 'v'. Expected e.g. v1.0.0"
+              exit 1
+            fi
+            VERSION="${TAG#v}"
+          fi
+
+          # NuGet-compatible SemVer 2.0: MAJOR.MINOR.PATCH with an optional prerelease suffix.
+          if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Version '${VERSION}' is not a valid version. Expected e.g. v1.0.0 or v1.1.0-beta.1"
+            exit 1
+          fi
+
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "Package version: ${VERSION}"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore src/FhirNavigator.sln
+
+      # Builds the whole solution so ConsoleApp acts as a compile check against the
+      # library's public surface. There is no automated test project in this repo.
+      - name: Build
+        run: >
+          dotnet build src/FhirNavigator.sln
+          --configuration Release
+          --no-restore
+          -p:Version=${{ steps.version.outputs.version }}
+          -p:ContinuousIntegrationBuild=true
+
+      # --no-build requires the same Version/ContinuousIntegrationBuild properties as
+      # the Build step, otherwise pack would reuse mismatched build output.
+      - name: Pack
+        run: >
+          dotnet pack src/FhirNavigator/FhirNavigator.csproj
+          --configuration Release
+          --no-build
+          --output artifacts
+          -p:Version=${{ steps.version.outputs.version }}
+          -p:ContinuousIntegrationBuild=true
+
+      - name: List produced packages
+        run: ls -l artifacts
+
+      - name: Upload packages as build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages-${{ steps.version.outputs.version }}
+          path: artifacts/*
+          if-no-files-found: error
+
+      # The OIDC-issued key is valid for 1 hour and can only be used once, so this
+      # runs immediately before the push rather than earlier in the job.
+      - name: NuGet login (OIDC to short-lived API key)
+        if: github.event_name == 'push'
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: AngusMillar
+
+      # Pushing the .nupkg also uploads the adjacent .snupkg automatically.
+      # --skip-duplicate makes a re-run of an already published version a no-op
+      # instead of a failure.
+      - name: Push to NuGet.org
+        if: github.event_name == 'push'
+        run: >
+          dotnet nuget push "artifacts/*.nupkg"
+          --api-key "${{ steps.nuget-login.outputs.NUGET_API_KEY }}"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
