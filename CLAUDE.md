@@ -26,20 +26,25 @@ dotnet pack src/FhirNavigator/FhirNavigator.csproj -c Release
 Publishing to NuGet.org is automated by `.github/workflows/publish-nuget.yml` and triggers **only** on a pushed lowercase `v` version tag:
 
 ```powershell
-# 1. Update <PackageReleaseNotes> in FhirNavigator.csproj, then commit
-git tag v1.0.0
-git push origin v1.0.0
+# 1. Rewrite <PackageReleaseNotes> in FhirNavigator.csproj for this release, commit,
+#    and merge to release (tag from there to match release history)
+git tag v1.1.0
+git push origin v1.1.0
 ```
+
+`<PackageReleaseNotes>` is **not** generated — it is hand-written and currently describes the 1.0.0 breaking changes. Rewrite it every release, or the NuGet page will advertise the previous release's notes.
 
 The tag is the single source of truth for the package version — the workflow passes `-p:Version=<tag minus the v>` to build and pack, and `<Version>` in the csproj is deliberately pinned to `0.0.0-local` so a locally built `.nupkg` can never be mistaken for a release. Do not expect to bump `<Version>` per release; bump the tag.
 
 Notes:
 
 - Tags must be lowercase `v` and semver (`v1.0.0`, `v1.1.0-beta.1`). The historical uppercase `V0.0.x` tags will **not** trigger a run — no run, no error.
-- Authentication uses NuGet.org **Trusted Publishing** (OIDC), not a stored API key. The policy on nuget.org is bound to this workflow's **file name**, so renaming or moving `publish-nuget.yml` silently breaks publishing until the policy is updated.
-- `workflow_dispatch` runs a build/pack dry run that publishes nothing and uploads the `.nupkg`/`.snupkg` as build artifacts.
+- Authentication uses NuGet.org **Trusted Publishing** (OIDC), not a stored API key. There is no secret in the repo and nothing to rotate. The policy is owned by nuget.org user `AngusMillar` and pinned to three things: repository `angusmillar/FhirNavigator`, workflow **file name** `publish-nuget.yml`, and an empty environment. Renaming or moving the workflow file silently breaks publishing until the policy is updated to match.
+- The policy is also **scoped to the `FhirNavigator` package**. Publishing a new package ID from this workflow requires widening that scope on nuget.org first, or the push is rejected even though the OIDC exchange succeeds.
+- `workflow_dispatch` runs a build/pack dry run that publishes nothing and uploads the `.nupkg`/`.snupkg` as build artifacts. Its "Run workflow" button only appears if the workflow exists on the repo's **default branch** (`release`) — a copy on `development` alone is not enough. Tag-triggered publishing has no such constraint; the workflow only needs to be in the tagged commit's tree.
 - The push uses `--skip-duplicate`, so re-running a release that already published is a no-op rather than a failure.
 - `GeneratePackageOnBuild` is off by design. CI runs `dotnet pack` explicitly, so nothing packs locally and there is no stray `.nupkg` to confuse with a release.
+- A newly pushed version is accepted immediately but takes a few minutes to appear on nuget.org while validation runs. A successful workflow with "Your package was pushed" in the log means the release worked, even if the version is not yet listed.
 
 **Versioning contract.** 0.0.9 was the last of the `0.0.x` line, where anything could change. From 1.0.0 onward this package is under SemVer: a namespace move, a removed public member, or a new `required` member on a public settings class is a **major** bump. Note that `required` members are source-breaking for consumers who construct settings objects in C#, but invisible to consumers who bind them from `appsettings.json`.
 
