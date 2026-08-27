@@ -1,5 +1,4 @@
 ﻿using Hl7.Fhir.Model;
-using Sonic.Fhir.Tools.Placer.Application.FhirSupport;
 
 namespace FhirNavigator.FhirSupport;
 

@@ -3,7 +3,6 @@ using FhirNavigator.FhirSupport;
 using FhirNavigator.Support;
 using Hl7.Fhir.Model;
 using Microsoft.Extensions.Options;
-using Sonic.Fhir.Tools.Placer.Application.FhirSupport;
 
 namespace FhirNavigator.FhirUri;
 

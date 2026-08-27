@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
+using FhirNavigator.Infrastructure;
 using Microsoft.Extensions.Logging;
-using Sonic.Fhir.Tools.Placer.Application.Infrastructure;
 
 namespace FhirNavigator.Client.OAuthToken
 {

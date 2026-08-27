@@ -1,8 +1,8 @@
 ﻿using FhirNavigator.FhirCallService;
+using FhirNavigator.FhirUri;
 using FhirNavigator.ResourceSearchCache;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
-using Sonic.Fhir.Tools.Placer.Application.FhirSupport;
 using Task = System.Threading.Tasks.Task;
 
 namespace FhirNavigator;

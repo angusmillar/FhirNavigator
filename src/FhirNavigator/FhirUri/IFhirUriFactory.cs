@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using FhirNavigator.FhirUri;
 
-namespace Sonic.Fhir.Tools.Placer.Application.FhirSupport;
+namespace FhirNavigator.FhirUri;
 
 public interface IFhirUriFactory
 {

@@ -1,4 +1,4 @@
-﻿namespace Sonic.Fhir.Tools.Placer.Application.Infrastructure;
+﻿namespace FhirNavigator.Infrastructure;
 
 public partial class Result
 {

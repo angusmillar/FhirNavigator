@@ -24,7 +24,7 @@ public class Application(
     IOptions<ApplicationConfiguration> appConfig,
     IFhirNavigatorFactory fhirNavigatorFactory)
 {
-    private const string RepositoryCode = "Pyro";
+    private const string RepositoryCode = "ThConnectathonServer";
     
     public async Task Run()
     {

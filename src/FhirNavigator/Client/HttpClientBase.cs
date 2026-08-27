@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Sonic.Fhir.Tools.Placer.Application.Infrastructure;
+﻿using FhirNavigator.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 namespace FhirNavigator.Client;
 

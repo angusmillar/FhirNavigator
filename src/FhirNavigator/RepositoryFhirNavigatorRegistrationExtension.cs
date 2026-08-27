@@ -11,7 +11,6 @@ using FhirNavigator.FhirUri;
 using FhirNavigator.Proxy;
 using FhirNavigator.ResourceSearchCache;
 using Microsoft.Extensions.DependencyInjection;
-using Sonic.Fhir.Tools.Placer.Application.FhirSupport;
 
 namespace FhirNavigator;
 

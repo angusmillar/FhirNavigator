@@ -71,6 +71,16 @@
     /// Basic Auth password
     /// </summary>
     public string Password { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Weather to use a provided Bearer Token
+    /// </summary>
+    public required bool UseBearerToken { get; init; } = false;
+    
+    /// <summary>
+    /// A Bearer Token
+    /// </summary>
+    public string BearerToken { get; set; } = string.Empty;
 
   }
 }

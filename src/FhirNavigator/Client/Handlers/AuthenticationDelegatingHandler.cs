@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using FhirNavigator.Client.OAuthToken;
+using FhirNavigator.Infrastructure;
 using Microsoft.Extensions.Logging;
-using Sonic.Fhir.Tools.Placer.Application.Infrastructure;
 
 namespace FhirNavigator.Client.Handlers;
 
@@ -57,6 +57,18 @@ public class AuthenticationDelegatingHandler(
                 parameter: GetBase64UsernamePassword(
                     username: OrderRepositorySettings.Username, 
                     password: OrderRepositorySettings.Password));
+        }
+        
+        if (OrderRepositorySettings.UseBearerToken)
+        {
+            if (string.IsNullOrWhiteSpace(OrderRepositorySettings.BearerToken))
+            {
+                throw new ArgumentException("When UseBearerToken is true a BearerToken must be provided.");
+            }
+            
+            request.Headers.Authorization = new AuthenticationHeaderValue(
+                scheme: "Bearer", 
+                parameter: OrderRepositorySettings.BearerToken);
         }
 
         if (!string.IsNullOrWhiteSpace(OrderRepositorySettings.X_API_Key))

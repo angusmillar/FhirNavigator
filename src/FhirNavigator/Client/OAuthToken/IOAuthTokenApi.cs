@@ -1,4 +1,4 @@
-﻿using Sonic.Fhir.Tools.Placer.Application.Infrastructure;
+﻿using FhirNavigator.Infrastructure;
 
 namespace FhirNavigator.Client.OAuthToken
 {
