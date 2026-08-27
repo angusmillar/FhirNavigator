@@ -1,4 +1,4 @@
-﻿namespace Sonic.Orders.Common.Api.OAuthToken
+﻿namespace FhirNavigator.Client.OAuthToken
 { 
   public class OAuthToken
   {

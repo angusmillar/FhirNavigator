@@ -36,7 +36,7 @@ namespace FhirNavigator.Client.OAuthToken
             return Result<ApiToken>.Fail($"HttpClient responded with the HTTP Status code of {response.StatusCode} yet the response's content was found to be null.");
           }
           var responseContent = await response.Content.ReadAsStringAsync();
-          Sonic.Orders.Common.Api.OAuthToken.OAuthToken? oAuthToken = JsonSerializer.Deserialize<Sonic.Orders.Common.Api.OAuthToken.OAuthToken>(responseContent);
+          OAuthToken? oAuthToken = JsonSerializer.Deserialize<OAuthToken>(responseContent);
           if (oAuthToken is not null)
           {
             ApiToken apiToken = new ApiToken(value: oAuthToken.access_token, scheme: oAuthToken.token_type, expiresInSec: oAuthToken.expires_in, obtainedAt: DateTime.Now);
