@@ -18,6 +18,16 @@ public static class RepositoryFhirNavigatorRegistrationExtension
 {
     public static void AddFhirNavigator(this IServiceCollection services, Action<FhirNavigatorSettings> settings)
     {
+        // Idempotent by design: independent modules within the same composition root each declare their own
+        // "I need FhirNavigator" registration method and are not expected to coordinate with one another, so this
+        // must tolerate being called more than once. It is not enough to TryAdd each individual service below —
+        // the AddHttpClient calls in the loop append to that named client's handler pipeline on every call, so a
+        // second run would double up the retry/auth handlers rather than just no-op.
+        if (services.Any(descriptor => descriptor.ServiceType == typeof(FhirNavigatorSettings)))
+        {
+            return;
+        }
+
         var fhirNavigatorSettings = FhirNavigatorSettings.GetDefault();
         settings(fhirNavigatorSettings);
 
