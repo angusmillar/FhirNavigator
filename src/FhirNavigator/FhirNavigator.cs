@@ -108,12 +108,6 @@ public class FhirNavigator(
                                              $"{resourceReference.Reference}. {errorLocationDisplay ?? string.Empty}");
         }
 
-        if (!parsedResourceReference.ResourceName.Equals(typeof(T).Name))
-        {
-            throw new ApplicationException(
-                $"The target resource type of {parsedResourceReference.ResourceName} does not align with the requested " +
-                $"type of {typeof(T).Name} for the full reference of {resourceReference.Reference}. {errorLocationDisplay ?? string.Empty}");
-        }
 
         if (parsedResourceReference.IsContained)
         {
@@ -155,6 +149,13 @@ public class FhirNavigator(
             return typedContainedResource;
         }
 
+        if (!parsedResourceReference.ResourceName.Equals(typeof(T).Name))
+        {
+            throw new ApplicationException(
+                $"The target resource type of {parsedResourceReference.ResourceName} does not align with the requested " +
+                $"type of {typeof(T).Name} for the full reference of {resourceReference.Reference}. {errorLocationDisplay ?? string.Empty}");
+        }
+        
         T? fhirResource = Cache.Get<T>(parsedResourceReference.ResourceId);
 
         if (fhirResource is null)
